@@ -19,14 +19,14 @@ from setuptools import setup
 setup(
     name='Flask-Uploads',
     version='0.1.4',
-    url='http://bitbucket.org/leafstorm/flask-uploads/',
+    url='http://github.com/codecool/flask-uploads',
     license='MIT',
     author='Matthew "LeafStorm" Frazier',
     author_email='leafstormrush@gmail.com',
     description='Flexible and efficient upload handling for Flask',
     long_description=__doc__,
-    packages=['flaskext'],
-    namespace_packages=['flaskext'],
+    packages=['flask_uploads'],
+    namespace_packages=['flask_uploads'],
     zip_safe=False,
     platforms='any',
     install_requires=[
