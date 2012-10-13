@@ -1,5 +1,5 @@
 Flask-Uploads
 
-It handles uploads. There's an example application in example/ that requires
-Flask-CouchDB. If you have nose installed, just run "nosetests" to run the
-tests.
+Fork on Flask-Uploads, an extension for Flask framework.
+
+This version integrates options to override default call to resolve_conflict.
