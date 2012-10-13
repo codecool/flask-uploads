@@ -66,6 +66,11 @@ class UploadNotAllowed(Exception):
     it in your view code and display an appropriate message to the user.
     """
 
+class DuplicateError(Exception):
+	"""
+	This exception is raised if RAISE_ON_DUPLICATE is True
+	"""
+
 
 def tuple_from(*iters):
     return tuple(itertools.chain(*iters))
@@ -164,6 +169,8 @@ def config_for_set(uset, app, defaults=None):
     deny_extns = tuple(config.get(prefix + 'DENY', ()))
     destination = config.get(prefix + 'DEST')
     base_url = config.get(prefix + 'URL')
+    fail_on_duplicate = config.get(prefix + 'FAIL_ON_DUPLICATE')
+    replace_on_duplicate = config.get(prefix + 'REPLACE_ON_DUPLICATE')
 
     if destination is None:
         # the upload set's destination wasn't given
@@ -181,7 +188,8 @@ def config_for_set(uset, app, defaults=None):
     if base_url is None and using_defaults and defaults['url']:
         base_url = addslash(defaults['url']) + uset.name + '/'
 
-    return UploadConfiguration(destination, base_url, allow_extns, deny_extns)
+    return UploadConfiguration(destination, base_url, allow_extns,
+                               deny_extns,fail_on_duplicate, replace_on_duplicate)
 
 
 def configure_uploads(app, upload_sets):
@@ -267,15 +275,19 @@ class UploadConfiguration(object):
     :param deny: A list of extensions to deny, even if they are in the
                  `UploadSet` extensions list.
     """
-    def __init__(self, destination, base_url=None, allow=(), deny=()):
+    def __init__(self, destination, base_url=None, allow=(), deny=(),
+                 fail_on_duplicate=None, replace_on_duplicate=None):
         self.destination = destination
         self.base_url = base_url
         self.allow = allow
         self.deny = deny
+        self.fail_on_duplicate=fail_on_duplicate
+        self.replace_on_duplicate = replace_on_duplicate
 
     @property
     def tuple(self):
-        return (self.destination, self.base_url, self.allow, self.deny)
+        return (self.destination, self.base_url, self.allow, self.deny,
+                self.fail_on_duplicate, self.replace_on_duplicate)
 
     def __eq__(self, other):
         return self.tuple == other.tuple
@@ -416,7 +428,10 @@ class UploadSet(object):
         if not os.path.exists(target_folder):
             os.makedirs(target_folder)
         if os.path.exists(os.path.join(target_folder, basename)):
-            basename = self.resolve_conflict(target_folder, basename)
+            if self.config.fail_on_duplicate:
+                raise DuplicateError
+            if not self.config.replace_on_duplicate:
+                basename = self.resolve_conflict(target_folder, basename)
 
         target = os.path.join(target_folder, basename)
         storage.save(target)
