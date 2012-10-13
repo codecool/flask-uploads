@@ -25,8 +25,8 @@ setup(
     author_email='leafstormrush@gmail.com',
     description='Flexible and efficient upload handling for Flask',
     long_description=__doc__,
-    packages=['flask_uploads'],
-    namespace_packages=['flask_uploads'],
+    packages=['flask-uploads'],
+    namespace_packages=['flask-uploads'],
     zip_safe=False,
     platforms='any',
     install_requires=[
