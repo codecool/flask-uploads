@@ -11,10 +11,12 @@ will pass.
 :copyright: 2010 Matthew "LeafStorm" Frazier
 :license:   MIT/X11, see LICENSE for details
 """
+
 from __future__ import with_statement
+import unittest
 import os.path
 from flask import Flask, url_for
-from flaskext.uploads import (UploadSet, UploadConfiguration, extension,
+from flask_uploads import (UploadSet, UploadConfiguration, extension,
     lowercase_ext, TestingFileStorage, patch_request_class, configure_uploads,
     addslash, ALL, AllExcept)
 
@@ -326,3 +328,7 @@ class TestPathsAndURLs(object):
             url = uset.url('foo.txt')
             assert url == 'http://localhost:5001/foo.txt'
         assert '_uploads' not in app.modules
+
+
+if __name__ == '__main__':
+	unittest.main()
